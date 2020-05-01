@@ -18,7 +18,7 @@ function getCWD(exchange_name) {
 async function runScript(exchange_name, script_name, opts) {
     script_path = getExchangeScript(exchange_name, script_name);
     cwd = getCWD(exchange_name);
-    cmd = `${script_path} --no-verbose ${opts}`;
+    cmd = `${script_path} --no-verbose --trace no ${opts}`;
     let { stdout, stderr } = await exec(cmd, { cwd });
     return stdout;
 }
