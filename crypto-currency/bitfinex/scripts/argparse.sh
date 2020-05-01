@@ -3,31 +3,49 @@
 function usage()
 {
 cat << EOF
-USAGE: $FUNCNAME [OPTIONS] [TEXT]
+USAGE: ./\$script_name [options...]
 
-OPTIONS
+OPTIONS:
 
-    -a  amount of instrument
-    -p  price of instrument
-    -s  symbol of instrument
-    -t  ordertype
-
-    --amount  Same as -a
-    --price   Same as -p
-    --symbol    Same as -s
-    --typeorder  Same as -t
-    --no-verbose don't print debug information
-
+    -a , --amount      amount of instrument
+    -p , --price       price of instrument
+    -s , --symbol      symbol of instrument (tBTCUSD), depend from exchange
+    -t , --typeorder   ordertype (LIMIT, MARKET), depend from exchange
+         --account     what account to use
+         --no-verbose  don't print debug inforamtion
+         --trace       log request/response to file (default: trace-ascii, no - for not using)
 EOF
 }
+
+function trace() {
+    if [ "$TRACE" = "--no" ]; then
+        TRACE=""
+    fi
+
+    if [ "$TRACE" = "--trace-ascii" ]; then
+        TRACE="$TRACE $TRACE_LOG"
+    fi
+}
+
+function verbose() {
+if [ "$VERBOSE" = "--verbose" ]; then
+    echo "SIGNATURE: $SIGNATURE"
+    echo "SIG      : $SIG"
+    echo "TRACE    : $TRACE"
+fi
+}
+
+#defaults
+verbose="--verbose"
+trace="--trace-ascii"
+
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
 key="$1"
 
-#defaults
-verbose="--verbose"
+
 
 
 case $key in
@@ -50,8 +68,17 @@ case $key in
     shift
     shift
     ;;
+    --trace)
+    trace="--$2"
+    shift
+    shift
+    ;;
     --no-verbose)
     verbose="--no-verbose"
+    shift 
+    ;;
+    --account)
+    account=$2
     shift 
     ;;
     *)    # unknown option
@@ -60,10 +87,6 @@ case $key in
     ;;
 esac
 done
-echo "AMOUNT    : $amount"
-echo "PRICE     : $price"
-echo "TYPEORDER : $typeorder"
-echo "VERBOSE   : $verbose"
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
 
