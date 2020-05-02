@@ -8,6 +8,7 @@
         "@testing-library/user-event": "^7.1.2",
         "concurrently": "^5.2.0",
         "electron": "^8.2.5",
+        "electron-util": "^0.14.1",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
         "react-scripts": "3.4.1",
@@ -18,7 +19,8 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "start-electron": "electron ."
+        "electron-dev": "EXCHANGES_SCRIPTS_PATH=/home/soarix/usr/projects/algotrading-dbg/crypto-currency/ ELECTRON_DISABLE_SECURITY_WARNING=true ELECTRON_START_URL=http://localhost:3000 electron .",
+        "dev": "concurrently -k \"npm start\" \"wait-on http://localhost:3000 && npm run electron-dev\""
     },
     "eslintConfig": {
         "extends": "react-app"
