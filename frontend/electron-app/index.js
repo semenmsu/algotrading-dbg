@@ -1,8 +1,17 @@
 const electron = require("electron")
 const { loadPlugins, exitHandler, SharedPtr } = require("./utils")
+const { getFormatedUTCTime } = require('./utils/time')
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 const { is } = require("electron-util")
 const { PLUGINS_PATH } = process.env
+
+
+async function timeitAsync(f){
+    let startTime = Date.now()
+    f()
+    let stopTime = Date.now()
+    return stopTime - startTime
+}
 
 
 const createMainWindow = () => {
@@ -59,7 +68,12 @@ async function runApp(createWindow) {
     async function wallets_request(exchange) {
         try {
             if (exchange in plugins) {
+                let start = Date.now()
                 let wallets = await plugins[exchange].wallets()
+                let latency = Date.now() - start
+                console.log(`[${getFormatedUTCTime()}] Bitfinex wallets request latency : `, latency)
+                //console.log('latency', latency)
+
                 mainWindow.webContents.send(`${exchange}:response:wallets`, wallets)
             } else {
                 console.log("request for undefined plugin ", exchange)
