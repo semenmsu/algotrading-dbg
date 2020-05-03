@@ -1,6 +1,6 @@
 
 function getFormatedUTCTime() {
-    new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+    return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 }
 
 module.exports = {

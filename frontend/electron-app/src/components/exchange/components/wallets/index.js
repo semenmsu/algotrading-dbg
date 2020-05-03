@@ -1,5 +1,6 @@
 import React from "react";
 import Wallet from "./wallet"
+import "./wallets.css"
 
 const { ipcRenderer } = window.require("electron")
 
@@ -45,11 +46,10 @@ class Wallets extends React.Component {
         const { wallets } = this.state;
         return (
             
-            <div>
-                <div>{JSON.stringify(wallets)}</div>
-                {/*wallets.valueSeq().map(wallet => (
+            <div className="wallets">
+                {wallets.map(wallet => (
                     <Wallet key={wallet.currency} wallet={wallet} />
-                ))*/}
+                ))}
             </div>
         );
     }

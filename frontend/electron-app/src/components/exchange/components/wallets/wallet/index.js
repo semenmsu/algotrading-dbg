@@ -1,22 +1,13 @@
 import React from "react";
+import './wallet.css'
 
 
-export default class Wallet extends React.Component {
-    render() {
-        const { wallet } = this.props;
-        return (
-            <div>
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        fontSize: "12px"
-                    }}
-                >
-                    <div style={{ width: "40px" }}>{wallet.currency}</div>
-                    <div style={{ width: "60px" }}>{wallet.balance}</div>
-                </div>
-            </div>
-        );
-    }
-}
+
+const Wallet = ({ wallet: {currency, balance} }) => 
+    <div className="wallet">
+        <div>{ currency }</div>
+        <div>{ balance }</div>
+    </div>
+
+export default Wallet
+

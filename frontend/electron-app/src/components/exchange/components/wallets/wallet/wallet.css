@@ -1,0 +1,13 @@
+.wallet {
+    display: flex;
+    flex-direction: row;
+    font-size: 12px;
+}
+
+.wallet > div:first-child {
+    width: 40px;
+}
+
+.wallet > div:nth-child(2) {
+    widows: 60px;
+}
