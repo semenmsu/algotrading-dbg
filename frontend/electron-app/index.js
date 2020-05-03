@@ -1,97 +1,59 @@
 const electron = require("electron")
-const { loadPlugins } = require("./utils")
+const { loadPlugins, exitHandler, SharedPtr } = require("./utils")
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 const { is } = require("electron-util")
 const { PLUGINS_PATH } = process.env
 
-async function runApp() {
+
+const createMainWindow = () => {
+    let mainWindow = new BrowserWindow({
+        webPreferences: {
+            devTools: is.development,
+            nodeIntegration: true
+        },
+        title: "CryptoTrader"
+    })
+
+
+
+    const startUrl = process.env.ELECTRON_START_URL || `file://${__dirname}/build/index.html`
+    mainWindow.loadURL(startUrl)
+    mainWindow.on('close', () => {
+        app.quit();
+        mainWindow = null;
+    })
+
+    if (process.env.ELECTRON_START_URL) {
+        const mainMenu = Menu.buildFromTemplate(menuTemplate);
+        Menu.setApplicationMenu(mainMenu)
+    } else {
+        Menu.setApplicationMenu(false);
+    }
+
+    return mainWindow
+}
+
+const menuTemplate = [
+    {
+        label: "View",
+        submenu: [{role:"reload"}, {role: "toggledevtools"}]
+    }
+];
+
+async function runApp(createWindow) {
 
     const plugins = await loadPlugins(PLUGINS_PATH)
 
     let mainWindow;
-
-    const createWindow = () => {
-        mainWindow = new BrowserWindow({
-            webPreferences: {
-                devTools: is.development,
-                nodeIntegration: true
-            },
-            title: "CryptoTrader"
-        })
-
-
-
-        const startUrl = process.env.ELECTRON_START_URL || `file://${__dirname}/build/index.html`
-        mainWindow.loadURL(startUrl)
-        mainWindow.on('close', () => {
-            app.quit();
-            mainWindow = null;
-        })
-
-        if (process.env.ELECTRON_START_URL) {
-            const mainMenu = Menu.buildFromTemplate(menuTemplate);
-            Menu.setApplicationMenu(mainMenu)
-        } else {
-            Menu.setApplicationMenu(false);
-        }
+    let onReady = () => {
+        mainWindow = createWindow()
     }
-    app.on('ready', createWindow)
+    //app.on('ready', windowCreator)
+    app.on('ready', onReady)
 
-    const menuTemplate = [
-        {
-            label: "View",
-            submenu: [{role:"reload"}, {role: "toggledevtools"}]
-        }
-    ];
+    
 
     const streams = new Map()
-
-    class SharedPtr {
-        constructor(timeout) {
-            this.ref_count = 1
-            this.timeout = timeout
-            this.setHandler = this.setHandler.bind(this)
-            this.timeoutHandler = this.timeoutHandler.bind(this)
-            this.incrementRef = this.incrementRef.bind(this)
-            this.decrementRef = this.decrementRef.bind(this)
-            this.shouldBeFree = this.shouldBeFree.bind(this)
-            this.free = this.free.bind(this)
-            
-
-        }
-
-        timeoutHandler() {
-            if (this.requestHandler) {
-                this.requestHandler()
-            }
-            this.timer = setTimeout(this.timeoutHandler, this.timeout)
-        }
-
-        setHandler(requestHandler) {
-            this.requestHandler = requestHandler
-            this.timer = setTimeout(this.timeoutHandler, 100)
-        }
-
-        incrementRef() {
-            this.ref_count++;
-        }
-
-        decrementRef() {
-            this.ref_count--;
-        }
-
-        shouldBeFree() {
-            return this.ref_count === 0
-        }
-
-        free() {
-            console.log("stream is clean!")
-            if (this.timer) {
-                clearTimeout(this.timer)
-            }
-            
-        }
-    }
 
     // ************************ plugins dependencies
     async function wallets_request(exchange) {
@@ -148,16 +110,6 @@ async function runApp() {
         mainWindow.webContents.send("react:counter:update", counter++) 
     }, 1000)
 
-    function exitHandler(options, exitCode) {
-        if (timer) {
-            clearInterval(timer)
-        } else {
-            console.log("no timer")
-        }
-        if (options.cleanup) console.log('clean');
-        if (exitCode || exitCode === 0) console.log(exitCode);
-        if (options.exit) process.exit();
-    }
 
     process.on('exit', exitHandler.bind(null,{cleanup:true}));
     process.on('SIGINT', exitHandler.bind(null, {exit:true}));
@@ -166,7 +118,7 @@ async function runApp() {
     process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
 }
 
-runApp()
+runApp(createMainWindow)
 
 
 
