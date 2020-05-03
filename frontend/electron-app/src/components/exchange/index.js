@@ -1,9 +1,9 @@
 import React from 'react'
-import Wallets from "./Wallets"
+import Wallets from "./components/wallets"
 
 class Exchange extends React.Component {
 
-    state = {show:true}
+    state = {show:false}
 
     onClick() {
         this.setState({show: !this.state.show})

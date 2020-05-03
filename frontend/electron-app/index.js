@@ -3,6 +3,10 @@ const electron = require("electron")
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 const { is } = require('electron-util');
+
+function loadExchanges() {
+    
+}
 const Bitfinex = require("../../backends/yard/src/bitfinex");
 const bfx = new Bitfinex(Bitfinex.BASH);
 
