@@ -1,5 +1,5 @@
 const electron = require("electron")
-const { loadPlugins, exitHandler, SharedPtr } = require("./utils")
+const { loadPlugins, exitHandler, StreamWorker } = require("./utils")
 const { getFormatedUTCTime } = require('./utils/time')
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 const { is } = require("electron-util")
@@ -90,11 +90,11 @@ async function runApp(createWindow) {
         if (streams.has(stream_name)) {
             streams.get(stream_name).incrementRef()
         } else {
-            let ptr = new SharedPtr(timeout)
+            let streamWorker = new StreamWorker(timeout)
             if (channel === "wallets") {
-                ptr.setHandler(()=> wallets_request(exchange))
+                streamWorker.setHandler(()=> wallets_request(exchange))
             }
-            streams.set(stream_name, ptr)
+            streams.set(stream_name, streamWorker)
         }
     }
 

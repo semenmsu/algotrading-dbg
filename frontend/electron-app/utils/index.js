@@ -21,17 +21,14 @@ async function loadPlugins(plugins_path , method="bash") {
     return plugins
 }
 
-function exitHandler(options, exitCode, cleanFunction) {
+function exitHandler(options, exitCode) {
 
-    if (cleanFunction) {
-        cleanFunction()
-    }
     if (options.cleanup) console.log('clean');
     if (exitCode || exitCode === 0) console.log(exitCode);
     if (options.exit) process.exit();
 }
 
-class SharedPtr {
+class StreamWorker {
     constructor(timeout) {
         this.ref_count = 1
         this.timeout = timeout
@@ -81,5 +78,5 @@ class SharedPtr {
 module.exports = {
     loadPlugins,
     exitHandler,
-    SharedPtr
+    StreamWorker
 }

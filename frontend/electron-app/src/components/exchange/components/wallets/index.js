@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import Wallet from "./wallet"
 import "./wallets.css"
-
-const { ipcRenderer } = window.require("electron")
+import { Context } from '../../../../context'
 
 class Wallets extends React.Component {
+
+    static contextType = Context
+
     constructor(props) {
         super()
         const { exchange } = props
@@ -14,12 +16,14 @@ class Wallets extends React.Component {
 
     walletsHandler(event, wallets) {
         this.setState({wallets})
-        console.log("wallets ", wallets)
     }
 
     componentDidMount() {
-        ipcRenderer.on(`${this.state.exchange}:response:wallets`, this.walletsHandler ,1000)
-        ipcRenderer.send(`request`, {
+        const { on, send, removeListener } = this.context
+        this.setState({on, send, removeListener})
+
+        on(`${this.state.exchange}:response:wallets`, this.walletsHandler ,1000)
+        send(`request`, {
             exchange: this.state.exchange,
             channel: "wallets",
             event: "subscribe",
@@ -28,18 +32,13 @@ class Wallets extends React.Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer)
-        ipcRenderer.removeListener(`${this.state.exchange}:response:wallets`, this.walletsHandler)
-        ipcRenderer.send(`request`, {
+        const { send, removeListener} = this.state
+        removeListener(`${this.state.exchange}:response:wallets`, this.walletsHandler)
+        send(`request`, {
             exchange: this.state.exchange,
             channel: "wallets",
             event: "unsubscribe"
         })
-        console.log("component will unmount")
-    }
-
-    onClick() {
-        
     }
 
     render() {
