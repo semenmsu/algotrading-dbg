@@ -19,7 +19,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "electron-dev": "EXCHANGES_SCRIPTS_PATH=/home/soarix/usr/projects/algotrading-dbg/crypto-currency/ ELECTRON_DISABLE_SECURITY_WARNING=true ELECTRON_START_URL=http://localhost:3000 electron .",
+        "electron-dev": "PLUGINS_PATH=/home/soarix/usr/projects/algotrading-dbg/backends/yard/src/plugins EXCHANGES_SCRIPTS_PATH=/home/soarix/usr/projects/algotrading-dbg/crypto-currency/ ELECTRON_DISABLE_SECURITY_WARNING=true ELECTRON_START_URL=http://localhost:3000 electron .",
         "dev": "concurrently -k \"npm start\" \"wait-on http://localhost:3000 && npm run electron-dev\""
     },
     "eslintConfig": {

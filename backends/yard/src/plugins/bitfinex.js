@@ -1,4 +1,4 @@
-const { runScript } = require("./utils");
+const { runScript } = require("../utils");
 
 class Wallets {
     constructor(response) {
@@ -45,7 +45,5 @@ class Bitfinex {
         return await this.backend.wallets();
     }
 }
-
-Bitfinex.BASH = "bash";
 
 module.exports = Bitfinex;
