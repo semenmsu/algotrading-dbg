@@ -1,6 +1,8 @@
 require("dotenv").config();
+const { bashAPI, restAPI, wsAPI } = require("./src/api");
 const Bitfinex = require("./src/bitfinex");
-const bfx = new Bitfinex(Bitfinex.BASH);
+
+const bfx = new Bitfinex(bashAPI);
 
 async function run() {
     //let ticker = await bfx.ticker()
